@@ -4,9 +4,23 @@
     ViewData["Title"] = "Home page";
 }
 
+
 <div class="text-center">
     <h1 class="display-4">Hello World!</h1>
-    @*<p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
 </div>
+
+<form method="post">
+    @*@Html.AntiForgeryToken()*@
+    @*Chat gpt told me to add this line but it appears asp.net core does this by default*@
+   
+    <input type="text"  name="messageInput"
+    @*Input text box*@
+    @*This text box is bound to the messageInput variable in the backend c#*@ />
+   
+    <button type="submit">Send Message
+        @*Submit button*@
+    </button>
+    
+</form>
 
 
