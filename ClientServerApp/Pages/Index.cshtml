@@ -4,7 +4,25 @@
     ViewData["Title"] = "Home page";
 }
 
+
 <div class="text-center">
-    <h1 class="display-4">Welcome to our app! I am happy to have you all!</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Hello World!</h1>
 </div>
+
+<form method="post" asp-page-handler="SendMessage">
+    @*method="post" asp-page-handler="SendMessage" refers to OnPostSendMessageAsync*@
+
+    @*@Html.AntiForgeryToken()*@
+    @*Chat gpt told me to add this line but it appears asp.net core does this by default*@
+   
+    <input type="text"  name="messageInput"
+    @*Input text box*@
+    @*This text box is bound to the messageInput variable in the backend c#*@ />
+   
+    <button type="submit">Send Message
+        @*Submit button*@
+    </button>
+    
+</form>
+
+
