@@ -9,7 +9,9 @@
     <h1 class="display-4">Hello World!</h1>
 </div>
 
-<form method="post">
+<form method="post" asp-page-handler="SendMessage">
+    @*method="post" asp-page-handler="SendMessage" refers to OnPostSendMessageAsync*@
+
     @*@Html.AntiForgeryToken()*@
     @*Chat gpt told me to add this line but it appears asp.net core does this by default*@
    
