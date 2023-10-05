@@ -18,7 +18,7 @@ namespace ClientServerApp.Pages
         }
 
         [BindProperty]
-        public string messageInput { get; set; }
+        public string? messageInput { get; set; }
         //This is the parameter for the form input
         //it is bound because the text box and variable share the same name (see the html view)
 
