@@ -4,10 +4,10 @@ namespace SignalRChat.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(string user, string message, string port)
         {
             // This method gets called from chat.js when the send message button is pressed
-            await Clients.All.SendAsync("ReceiveMessage", user, message);
+            await Clients.All.SendAsync("ReceiveMessage", user, message, port);
         }
     }
 }
