@@ -9,6 +9,7 @@ document.getElementById("sendButton").disabled = true;
 connection.on("ReceiveMessage", function (user, message, port) {
     // This method is called when a message is received from the server.
     if(document.getElementById("portInput").value == port){
+        // Checks whether the received message is on the current port
 
         var li = document.createElement("li");
         document.getElementById("messagesList").appendChild(li);
@@ -21,8 +22,6 @@ connection.on("ReceiveMessage", function (user, message, port) {
         // Assigns the list item content here
 
     }
-
-    
 });
 
 connection.start().then(function () {
