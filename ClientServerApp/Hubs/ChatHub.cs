@@ -9,19 +9,18 @@ namespace SignalRChat.Hubs
         public async Task SendMessage(string user, string message, string room)
         {
             // This method gets called from chat.js when the send message button is pressed
+
             var clientId = Context.ConnectionId;
             var targetRoomList = this.roomController.SearchRooms(clientId);
+            // Finds the room the sender client is currently in
 
             if (targetRoomList != null)
             {
                 // Only sends message if the target room has clients connected
-                // This should never happen as to send a message, at least yourself must be in that room
-                //await Clients.Users(targetRoomList).SendAsync("ReceiveMessage", user, message, room);
-                await Clients.User(targetRoomList[0]).SendAsync("ReceiveMessage", user, message, room);
+                
+                await Clients.Users(targetRoomList).SendAsync("ReceiveMessage", user, message, room);
+                // Calls ReceieveMessage on all the clients in the sender clients room
             }
-
-
-
 
             // await Clients.All.SendAsync("ReceiveMessage", user, message, room);
         }
@@ -29,14 +28,15 @@ namespace SignalRChat.Hubs
         public async Task RoomConnect(string portId)
         {
             // This method gets called from chat.js when the connect room button is pressed
+
             await roomController.AddClientToRoom(Context.ConnectionId, portId);
-            Console.WriteLine(Context.ConnectionId);
-            roomController.ShowRooms();
+            // If the room doesnt exist yet, it creates the room and adds the client to it
         }
         private class RoomController
         {
             // This is an inner class that manages the port list functionality
             private static List<Room> roomList = new();
+            // Had to make this list static because it kept becoming null
             public async Task<IResult> AddClientToRoom(string clientId, string roomId)
             {
                 if (SearchRooms(clientId) != null)
