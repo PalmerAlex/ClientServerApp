@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using ClientServerApp.Pages;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.VisualBasic;
 
@@ -5,24 +7,27 @@ namespace SignalRChat.Hubs
 {
     public class ChatHub : Hub
     {
-        private RoomController roomController = new();
+        private RoomController roomController;
+
+        public ChatHub()
+        {
+            this.roomController = new(Groups);
+        }
         public async Task SendMessage(string user, string message, string room)
         {
             // This method gets called from chat.js when the send message button is pressed
 
-            var clientId = Context.ConnectionId;
-            var targetRoomList = this.roomController.SearchRooms(clientId);
+            string? targetRoomId = this.roomController.SearchRooms(Context.ConnectionId);
             // Finds the room the sender client is currently in
-
-            if (targetRoomList != null)
+           
+            if (targetRoomId != null)
             {
                 // Only sends message if the target room has clients connected
                 
-                await Clients.Users(targetRoomList).SendAsync("ReceiveMessage", user, message, room);
+                await Clients.Group(targetRoomId).SendAsync("ReceiveMessage", user, message, room);
                 // Calls ReceieveMessage on all the clients in the sender clients room
             }
-
-            // await Clients.All.SendAsync("ReceiveMessage", user, message, room);
+            
         }
 
         public async Task RoomConnect(string portId)
@@ -30,107 +35,38 @@ namespace SignalRChat.Hubs
             // This method gets called from chat.js when the connect room button is pressed
 
             await roomController.AddClientToRoom(Context.ConnectionId, portId);
-            // If the room doesnt exist yet, it creates the room and adds the client to it
         }
+
         private class RoomController
         {
-            // This is an inner class that manages the port list functionality
-            private static List<Room> roomList = new();
-            // Had to make this list static because it kept becoming null
+            // This is an inner class that manages the SignalR Group functionality
+            private IGroupManager groupManager;
+            private static Dictionary<string,string> roomConnections = new Dictionary<string, string>();
+            
+            public RoomController(IGroupManager manager)
+            {
+                this.groupManager = manager;
+            }
             public async Task<IResult> AddClientToRoom(string clientId, string roomId)
             {
-                if (SearchRooms(clientId) != null)
-                {
-                    RemoveClientFromRoom(roomId, clientId);
+                string? groupId = SearchRooms(clientId);
+                if(groupId != null){
+                    await groupManager.RemoveFromGroupAsync(clientId,groupId);
+                    roomConnections.Remove(clientId);
                 }
-                // Disconnects client from their current port before adding them to a new one
+                // Disconnect client from their current port before adding them to a new one
 
-                foreach (Room room in roomList)
-                {
-                    if (room.FetchRoomId() == roomId)
-                    {
-                        room.ConnectUser(clientId);
-                        return Results.Ok();
-                        // Exits the method if the target room already exists
-                    }
-                }
-                await CreateRoom(clientId, roomId);
+                await groupManager.AddToGroupAsync(clientId,roomId);
+                roomConnections.Add(clientId,roomId);
                 // If a client tries to connect to a non-existant room, it creates one and adds them to it
                 return Results.Ok();
             }
 
-            public List<string> SearchRooms(string targetClientId)
+            public string? SearchRooms(string targetClientId)
             {
-                foreach (Room room in roomList)
-                {
-                    
-                    if (room.CheckForClient(targetClientId))
-                    {
-                        return room.FetchClientIdList();
-                    }
-                }
-                return null;
-            }
-            public void RemoveClientFromRoom(string roomId, string clientId)
-            {
-                foreach (Room room in roomList)
-                {
-                    if (room.FetchRoomId() == roomId)
-                    {
-                        room.FetchClientIdList().Remove(clientId);
-                    }
-                }
-            }
-
-            private async Task<IResult> CreateRoom(string clientId, string roomId)
-            {
-                // Makes a new room with the given Id, then adds the given client to that room
-                roomList.Add(new Room(roomId, clientId));
-                return Results.Ok();
-            }
-
-            public void ShowRooms(){
-                foreach (Room room in roomList)
-                {
-                    Console.WriteLine(room.ToString());
-                }
-            }
-            private class Room
-            {
-                // This is an inner class that manages individual room behaviour
-                private string roomId;
-                private List<string> clientIdList = new();
-
-                public Room(string roomId, string clientId)
-                {
-                    this.roomId = roomId;
-                    ConnectUser(clientId);
-                }
-                public List<string> FetchClientIdList()
-                {
-                    return this.clientIdList;
-                }
-             
-                public string FetchRoomId()
-                {
-                    return this.roomId;
-                }
-                public void ConnectUser(string clientId)
-                {
-                    this.clientIdList.Add(clientId);
-                }
-                public bool CheckForClient(string clientId)
-                {
-                    if (this.clientIdList.Contains(clientId))
-                    {
-                        return true;
-                    }
-                    return false;
-                }
-                public override string ToString()
-                {
-                    return "RoomId: " + this.roomId + " Clients: " + this.clientIdList.ToString();
-                }
+                string? groupId;
+                roomConnections.TryGetValue(targetClientId, out groupId);
+                return groupId;
             }
         }
 
