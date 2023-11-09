@@ -17,10 +17,8 @@ connection.on("ReceiveMessage", function (user, message, targetRoomId) {
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
 
-    li.textContent = `[ROOM: ${room}]${user} says ${message}`;
+    li.textContent = `[ROOM: ${targetRoomId}]${user} says ${message}`;
     // Assigns the list item content here
-
-
 });
 
 connection.start().then(function () {
