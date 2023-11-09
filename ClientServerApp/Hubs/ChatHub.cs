@@ -20,7 +20,7 @@ namespace SignalRChat.Hubs
             {
                 // Only sends message if the target room has clients connected
 
-                await Clients.Group(targetRoomId).SendAsync("ReceiveMessage", user, message, room);
+                await Clients.Group(targetRoomId).SendAsync("ReceiveMessage", user, message,targetRoomId);
                 // Calls ReceieveMessage on all the clients in the sender clients room
             }
 

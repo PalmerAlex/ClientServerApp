@@ -6,7 +6,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 // Disable the send button until connection is established.
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (user, message, room) {
+connection.on("ReceiveMessage", function (user, message, targetRoomId) {
     // This method is called when a message is received from the server.
     console.log("Message received");
 
