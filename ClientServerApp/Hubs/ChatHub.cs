@@ -9,7 +9,7 @@ namespace SignalRChat.Hubs
     {
         private static Dictionary<string, string> roomConnections = new Dictionary<string, string>();
 
-        public async Task SendMessage(string user, string message, string room)
+        public async Task SendMessage(string user, string message)
         {
             // This method gets called from chat.js when the send message button is pressed
 

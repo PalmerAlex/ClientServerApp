@@ -48,9 +48,8 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     // This method is called when the send button is pressed.
     var user = document.getElementById("userInput").value;
     var message = document.getElementById("messageInput").value;
-    var room = document.getElementById("roomInput").value;
- 
-    connection.invoke("SendMessage", user, message, room).catch(function (err) {
+    
+    connection.invoke("SendMessage", user, message).catch(function (err) {
         // Calls the SendMessage method in ChatHub.cs
         return console.error(err.toString());
     });
