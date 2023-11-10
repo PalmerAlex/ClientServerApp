@@ -25,6 +25,22 @@ namespace SignalRChat.Hubs
             }
 
         }
+        public async Task SendGif(string user)
+        {
+            // This method gets called from chat.js when the send message button is pressed
+
+            string? targetRoomId = await SearchRooms(Context.ConnectionId);
+            // Finds the room the sender client is currently in
+
+            if (targetRoomId != null)
+            {
+                // Only sends message if the target room has clients connected
+
+                await Clients.Group(targetRoomId).SendAsync("ReceiveGif", user, targetRoomId);
+                // Calls ReceieveGif on all the clients in the sender clients room
+            }
+
+        }
 
         public async Task RoomConnect(string portId)
         {
