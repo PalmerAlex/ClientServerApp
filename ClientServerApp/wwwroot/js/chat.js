@@ -18,7 +18,7 @@ connection.on("ReceiveMessage", function (user, message) {
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
 
-    li.textContent = `Anon-${user} : ${message}`;
+    li.textContent = `User-${user} : ${message}`;
     // Assigns the list item content here
 });
 
@@ -30,7 +30,7 @@ connection.on("ReceiveGif", function (user) {
     document.getElementById("messagesList").appendChild(li);
     // Creates a new list item and adds it to the messagesList UL on index.cshtml
 
-    li.innerHTML = `<span>${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="100px" width="auto">`;
+    li.innerHTML = `<span>User-${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="100px" width="auto">`;
     // Assigns the list item content here
 });
 
