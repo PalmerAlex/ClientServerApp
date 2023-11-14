@@ -39,6 +39,8 @@ connection.start().then(function () {
     document.getElementById("sendGifButton").disabled = false;
     // Enable the buttons once connection is established.
 
+    makeRoomConnectionReq("Room1");
+
 }).catch(function (err) {
     return console.error(err.toString());
     // Prints any error message to console.
@@ -47,10 +49,24 @@ connection.start().then(function () {
 document.getElementById("roomButton").addEventListener("click", function (event) {
     // This method is called when the room button is pressed.
     var room = document.getElementById("roomInput").value;
-    
+
+    makeRoomConnectionReq(room);
+
+    event.preventDefault();
+});
+
+function makeRoomConnectionReq(room) {
     connection.invoke("RoomConnect", room).then(function (isConnected) {
-        if(isConnected){
-            alert(`Connected to ${room}`);
+        if (isConnected) {
+            var list = document.getElementById("messagesList");
+            while (list.firstChild) {
+                list.removeChild(list.firstChild);
+            }
+            // Clear the contents of the message list
+            
+            var li = document.createElement("li");
+            list.appendChild(li);
+            li.textContent = `Connected to ${room}`;
         } else {
             alert(`Failed to connect to ${room}`);
         }
@@ -58,13 +74,13 @@ document.getElementById("roomButton").addEventListener("click", function (event)
         // Calls the RoomConnect method in ChatHub.cs
         return console.error(err.toString());
     });
-    event.preventDefault();
-});
+
+}
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
     // This method is called when the send button is pressed.
     var message = document.getElementById("messageInput").value;
-    
+
     connection.invoke("SendMessage", message).catch(function (err) {
         // Calls the SendMessage method in ChatHub.cs
         return console.error(err.toString());
