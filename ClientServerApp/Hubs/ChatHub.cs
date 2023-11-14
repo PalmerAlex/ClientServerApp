@@ -42,11 +42,13 @@ namespace SignalRChat.Hubs
 
         }
 
-        public async Task RoomConnect(string portId)
+        public async Task<bool> RoomConnect(string portId)
         {
             // This method gets called from chat.js when the connect room button is pressed
 
             await AddClientToRoom(Context.ConnectionId, portId);
+            return true;
+
         }
 
         private async Task<IResult> AddClientToRoom(string clientId, string roomId)

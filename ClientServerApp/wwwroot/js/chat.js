@@ -30,7 +30,7 @@ connection.on("ReceiveGif", function (user) {
     document.getElementById("messagesList").appendChild(li);
     // Creates a new list item and adds it to the messagesList UL on index.cshtml
 
-    li.innerHTML = `<span>User-${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="100px" width="auto">`;
+    li.innerHTML = `<span>User-${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="150px" width="auto">`;
     // Assigns the list item content here
 });
 
@@ -48,7 +48,13 @@ document.getElementById("roomButton").addEventListener("click", function (event)
     // This method is called when the room button is pressed.
     var room = document.getElementById("roomInput").value;
     
-    connection.invoke("RoomConnect", room).catch(function (err) {
+    connection.invoke("RoomConnect", room).then(function (isConnected) {
+        if(isConnected){
+            alert(`Connected to ${room}`);
+        } else {
+            alert(`Failed to connect to ${room}`);
+        }
+    }).catch(function (err) {
         // Calls the RoomConnect method in ChatHub.cs
         return console.error(err.toString());
     });
