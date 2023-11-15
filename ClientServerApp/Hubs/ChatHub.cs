@@ -9,7 +9,7 @@ namespace SignalRChat.Hubs
     {
         private static Dictionary<string, string> roomConnections = new Dictionary<string, string>();
 
-        public async Task SendMessage(string user, string message, string room)
+        public async Task SendMessage(string message)
         {
             // This method gets called from chat.js when the send message button is pressed
 
@@ -20,19 +20,36 @@ namespace SignalRChat.Hubs
             {
                 // Only sends message if the target room has clients connected
 
-                await Clients.Group(targetRoomId).SendAsync("ReceiveMessage", user, message, room);
+                await Clients.Group(targetRoomId).SendAsync("ReceiveMessage", Context.ConnectionId[..6], message);
                 // Calls ReceieveMessage on all the clients in the sender clients room
             }
 
         }
+        public async Task SendGif()
+        {
+            // This method gets called from chat.js when the send message button is pressed
 
-        public async Task RoomConnect(string portId)
+            string? targetRoomId = await SearchRooms(Context.ConnectionId);
+            // Finds the room the sender client is currently in
+
+            if (targetRoomId != null)
+            {
+                // Only sends message if the target room has clients connected
+
+                await Clients.Group(targetRoomId).SendAsync("ReceiveGif", Context.ConnectionId[..6]);
+                // Calls ReceieveGif on all the clients in the sender clients room
+            }
+
+        }
+
+        public async Task<bool> RoomConnect(string portId)
         {
             // This method gets called from chat.js when the connect room button is pressed
 
             await AddClientToRoom(Context.ConnectionId, portId);
-        }
+            return true;
 
+        }
 
         private async Task<IResult> AddClientToRoom(string clientId, string roomId)
         {
