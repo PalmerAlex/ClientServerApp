@@ -52,6 +52,10 @@ document.getElementById("roomButton").addEventListener("click", function (event)
 
     makeRoomConnectionReq(room);
 
+    document.getElementById("roomInput").value = "";
+    // Clear the text field once pressed
+    // May need to make sure the connection was successful first
+
     event.preventDefault();
 });
 
@@ -85,6 +89,11 @@ document.getElementById("sendButton").addEventListener("click", function (event)
         // Calls the SendMessage method in ChatHub.cs
         return console.error(err.toString());
     });
+
+    document.getElementById("messageInput").value = "";
+    // Clear the text field once pressed
+    // May need to make sure the message was successfully sent first
+
     event.preventDefault();
 });
 
