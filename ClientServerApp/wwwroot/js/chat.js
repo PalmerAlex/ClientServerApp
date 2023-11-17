@@ -59,6 +59,24 @@ document.getElementById("roomButton").addEventListener("click", function (event)
     event.preventDefault();
 });
 
+document.getElementById("sendButton").addEventListener("click", function (event) {
+    // This method is called when the send button is pressed.
+    
+    sendMessageToServer();
+
+    event.preventDefault();
+});
+
+document.getElementById("sendGifButton").addEventListener("click", function (event) {
+    // This method is called when the send button is pressed.
+
+    connection.invoke("SendGif").catch(function (err) {
+        // Calls the SendMessage method in ChatHub.cs
+        return console.error(err.toString());
+    });
+    event.preventDefault();
+});
+
 function makeRoomConnectionReq(room) {
     connection.invoke("RoomConnect", room).then(function (isConnected) {
         if (isConnected) {
@@ -81,8 +99,7 @@ function makeRoomConnectionReq(room) {
 
 }
 
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    // This method is called when the send button is pressed.
+function sendMessageToServer() {
     var message = document.getElementById("messageInput").value;
 
     if (message != "") {
@@ -95,15 +112,4 @@ document.getElementById("sendButton").addEventListener("click", function (event)
         // Clear the text field once pressed
         // May need to make sure the message was successfully sent first
     }
-    event.preventDefault();
-});
-
-document.getElementById("sendGifButton").addEventListener("click", function (event) {
-    // This method is called when the send button is pressed.
-
-    connection.invoke("SendGif").catch(function (err) {
-        // Calls the SendMessage method in ChatHub.cs
-        return console.error(err.toString());
-    });
-    event.preventDefault();
-});
+}
