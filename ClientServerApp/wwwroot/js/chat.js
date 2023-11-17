@@ -77,6 +77,12 @@ document.getElementById("sendGifButton").addEventListener("click", function (eve
     event.preventDefault();
 });
 
+document.getElementById("messageInput").addEventListener("keydown", function(event){
+    if (event.key === "Enter") {
+        sendMessageToServer();
+    }
+});
+
 function makeRoomConnectionReq(room) {
     connection.invoke("RoomConnect", room).then(function (isConnected) {
         if (isConnected) {
