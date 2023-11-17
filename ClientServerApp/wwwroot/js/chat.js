@@ -59,40 +59,10 @@ document.getElementById("roomButton").addEventListener("click", function (event)
     event.preventDefault();
 });
 
-function makeRoomConnectionReq(room) {
-    connection.invoke("RoomConnect", room).then(function (isConnected) {
-        if (isConnected) {
-            var list = document.getElementById("messagesList");
-            while (list.firstChild) {
-                list.removeChild(list.firstChild);
-            }
-            // Clear the contents of the message list
-            
-            var li = document.createElement("li");
-            list.appendChild(li);
-            li.textContent = `Connected to ${room}`;
-        } else {
-            alert(`Failed to connect to ${room}`);
-        }
-    }).catch(function (err) {
-        // Calls the RoomConnect method in ChatHub.cs
-        return console.error(err.toString());
-    });
-
-}
-
 document.getElementById("sendButton").addEventListener("click", function (event) {
     // This method is called when the send button is pressed.
-    var message = document.getElementById("messageInput").value;
-
-    connection.invoke("SendMessage", message).catch(function (err) {
-        // Calls the SendMessage method in ChatHub.cs
-        return console.error(err.toString());
-    });
-
-    document.getElementById("messageInput").value = "";
-    // Clear the text field once pressed
-    // May need to make sure the message was successfully sent first
+    
+    sendMessageToServer();
 
     event.preventDefault();
 });
@@ -106,3 +76,46 @@ document.getElementById("sendGifButton").addEventListener("click", function (eve
     });
     event.preventDefault();
 });
+
+document.getElementById("messageInput").addEventListener("keydown", function(event){
+    if (event.key === "Enter") {
+        sendMessageToServer();
+    }
+});
+
+function makeRoomConnectionReq(room) {
+    connection.invoke("RoomConnect", room).then(function (isConnected) {
+        if (isConnected) {
+            var list = document.getElementById("messagesList");
+            while (list.firstChild) {
+                list.removeChild(list.firstChild);
+            }
+            // Clear the contents of the message list
+
+            var li = document.createElement("li");
+            list.appendChild(li);
+            li.textContent = `Connected to ${room}`;
+        } else {
+            alert(`Failed to connect to ${room}`);
+        }
+    }).catch(function (err) {
+        // Calls the RoomConnect method in ChatHub.cs
+        return console.error(err.toString());
+    });
+
+}
+
+function sendMessageToServer() {
+    var message = document.getElementById("messageInput").value;
+
+    if (message != "") {
+        // Doesnt allow blank messages to be sent
+        connection.invoke("SendMessage", message).catch(function (err) {
+            // Calls the SendMessage method in ChatHub.cs
+            return console.error(err.toString());
+        });
+        document.getElementById("messageInput").value = "";
+        // Clear the text field once pressed
+        // May need to make sure the message was successfully sent first
+    }
+}
