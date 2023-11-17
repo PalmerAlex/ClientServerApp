@@ -67,7 +67,7 @@ function makeRoomConnectionReq(room) {
                 list.removeChild(list.firstChild);
             }
             // Clear the contents of the message list
-            
+
             var li = document.createElement("li");
             list.appendChild(li);
             li.textContent = `Connected to ${room}`;
@@ -85,15 +85,16 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     // This method is called when the send button is pressed.
     var message = document.getElementById("messageInput").value;
 
-    connection.invoke("SendMessage", message).catch(function (err) {
-        // Calls the SendMessage method in ChatHub.cs
-        return console.error(err.toString());
-    });
-
-    document.getElementById("messageInput").value = "";
-    // Clear the text field once pressed
-    // May need to make sure the message was successfully sent first
-
+    if (message != "") {
+        // Doesnt allow blank messages to be sent
+        connection.invoke("SendMessage", message).catch(function (err) {
+            // Calls the SendMessage method in ChatHub.cs
+            return console.error(err.toString());
+        });
+        document.getElementById("messageInput").value = "";
+        // Clear the text field once pressed
+        // May need to make sure the message was successfully sent first
+    }
     event.preventDefault();
 });
 
