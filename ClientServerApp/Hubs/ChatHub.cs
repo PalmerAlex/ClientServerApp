@@ -10,6 +10,11 @@ namespace SignalRChat.Hubs
     {
         private static Dictionary<string, string> roomConnections = new Dictionary<string, string>();
 
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            RemoveClientFromRoom(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
         
         #region MessageSending
         public async Task SendMessage(string message)
@@ -47,8 +52,6 @@ namespace SignalRChat.Hubs
 
         #endregion
         #region RoomFunctionality
-
-
         public async Task<bool> RoomConnect(string portId)
         {
             // This method gets called from chat.js when the connect room button is pressed
@@ -57,7 +60,6 @@ namespace SignalRChat.Hubs
             return true;
 
         }
-
         private async Task<IResult> AddClientToRoom(string clientId, string roomId)
         {
             await RemoveClientFromRoom(clientId);
@@ -68,7 +70,6 @@ namespace SignalRChat.Hubs
             // If a client tries to connect to a non-existant room, it creates one and adds them to it
             return Results.Ok();
         }
-
         private async Task<IResult> RemoveClientFromRoom(string clientId)
         {
             string? groupId = await SearchRooms(clientId);
@@ -79,7 +80,6 @@ namespace SignalRChat.Hubs
             }
             return Results.Ok();
         }
-
         private async Task<string?> SearchRooms(string targetClientId)
         {
             string? groupId;
