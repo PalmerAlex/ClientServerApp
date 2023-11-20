@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using ClientServerApp.Pages;
 using Microsoft.AspNetCore.SignalR;
@@ -9,6 +10,13 @@ namespace SignalRChat.Hubs
     {
         private static Dictionary<string, string> roomConnections = new Dictionary<string, string>();
 
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            RemoveClientFromRoom(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
+        
+        #region MessageSending
         public async Task SendMessage(string message)
         {
             // This method gets called from chat.js when the send message button is pressed
@@ -42,6 +50,8 @@ namespace SignalRChat.Hubs
 
         }
 
+        #endregion
+        #region RoomFunctionality
         public async Task<bool> RoomConnect(string portId)
         {
             // This method gets called from chat.js when the connect room button is pressed
@@ -50,8 +60,17 @@ namespace SignalRChat.Hubs
             return true;
 
         }
-
         private async Task<IResult> AddClientToRoom(string clientId, string roomId)
+        {
+            await RemoveClientFromRoom(clientId);
+            // Disconnect client from their current room before adding them to a new one
+
+            await Groups.AddToGroupAsync(clientId, roomId);
+            roomConnections.Add(clientId, roomId);
+            // If a client tries to connect to a non-existant room, it creates one and adds them to it
+            return Results.Ok();
+        }
+        private async Task<IResult> RemoveClientFromRoom(string clientId)
         {
             string? groupId = await SearchRooms(clientId);
             if (groupId != null)
@@ -59,19 +78,15 @@ namespace SignalRChat.Hubs
                 await Groups.RemoveFromGroupAsync(clientId, groupId);
                 roomConnections.Remove(clientId);
             }
-            // Disconnect client from their current port before adding them to a new one
-
-            await Groups.AddToGroupAsync(clientId, roomId);
-            roomConnections.Add(clientId, roomId);
-            // If a client tries to connect to a non-existant room, it creates one and adds them to it
             return Results.Ok();
         }
-
         private async Task<string?> SearchRooms(string targetClientId)
         {
-             string? groupId;
+            string? groupId;
             roomConnections.TryGetValue(targetClientId, out groupId);
             return groupId;
         }
+        #endregion
     }
+
 }
