@@ -53,17 +53,21 @@ namespace SignalRChat.Hubs
 
         private async Task<IResult> AddClientToRoom(string clientId, string roomId)
         {
-            string? groupId = await SearchRooms(clientId);
-            if (groupId != null)
-            {
-                await Groups.RemoveFromGroupAsync(clientId, groupId);
-                roomConnections.Remove(clientId);
-            }
-            // Disconnect client from their current port before adding them to a new one
+            await RemoveClientFromRoom(clientId);
+            // Disconnect client from their current room before adding them to a new one
 
             await Groups.AddToGroupAsync(clientId, roomId);
             roomConnections.Add(clientId, roomId);
             // If a client tries to connect to a non-existant room, it creates one and adds them to it
+            return Results.Ok();
+        }
+
+        private async Task<IResult> RemoveClientFromRoom(string clientId){
+            string? groupId = await SearchRooms(clientId);
+            if (groupId != null){
+                await Groups.RemoveFromGroupAsync(clientId, groupId);
+                roomConnections.Remove(clientId);
+            }
             return Results.Ok();
         }
 
