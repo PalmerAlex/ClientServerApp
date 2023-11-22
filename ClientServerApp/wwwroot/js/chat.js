@@ -20,6 +20,8 @@ connection.on("ReceiveMessage", function (user, message) {
 
     li.textContent = `User-${user} : ${message}`;
     // Assigns the list item content here
+
+    scrollChatToBottom();
 });
 
 connection.on("ReceiveGif", function (user) {
@@ -32,6 +34,8 @@ connection.on("ReceiveGif", function (user) {
 
     li.innerHTML = `<span>User-${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="150px" width="auto">`;
     // Assigns the list item content here
+
+    scrollChatToBottom();
 });
 
 connection.start().then(function () {
@@ -118,4 +122,9 @@ function sendMessageToServer() {
         // Clear the text field once pressed
         // May need to make sure the message was successfully sent first
     }
+}
+
+function scrollChatToBottom(){
+    var chatbox = document.getElementById("chatBox");
+    chatbox.scrollTop = chatbox.scrollHeight;
 }
