@@ -11,8 +11,7 @@
 
 <div class="container">
      <div class="row p-1">
-        <div class="col-1">Room</div>
-        <div class="col-5"><input type="text" class="w-100" id="roomInput" /></div>
+        <div class="col-6"><input type="text" class="w-100" id="roomInput" /></div>
         <!-- Room input box -->
     </div>
     <div class="row p-1">
@@ -21,9 +20,21 @@
             <!-- Room connect button -->
         </div>
     </div>
+    
+    
     <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+        <div class="col-6">
+            <hr />
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col-6">
+            <ul id="messagesList"></ul>
+            <!-- List of messages that gets appended in chat.js -->
+        </div>
+    </div>
+    <div class="row p-1">
+        <div class="col-6"><input type="text" class="w-100" id="messageInput" /></div>
         <!-- Message input box -->
     </div>
     <div class="row p-1">
@@ -34,17 +45,6 @@
         <div class="col-1 text-end">
             <input type="button" id="sendGifButton" value="Send Gif" />
             <!-- Send Gif button -->
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <hr />
-        </div>
-    </div>
-    <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-            <!-- List of messages that gets appended in chat.js -->
         </div>
     </div>
 </div>
