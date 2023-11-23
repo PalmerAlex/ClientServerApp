@@ -9,29 +9,20 @@ document.getElementById("sendGifButton").disabled = true;
 
 connection.on("ReceiveMessage", function (user, message) {
     // This method is called when a message is received from the server.
-    console.log("Message received");
+   
+    if(displayNewMessage(`User-${user} : ${message}`)){
+        scrollChatToBottom();
+    }
 
-    var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
-    // Creates a new list item and adds it to the messagesList UL on index.cshtml
-    // We can assign user-supplied strings to an element's textContent because it
-    // is not interpreted as markup. If you're assigning in any other way, you 
-    // should be aware of possible script injection concerns.
-
-    li.textContent = `User-${user} : ${message}`;
-    // Assigns the list item content here
 });
 
 connection.on("ReceiveGif", function (user) {
     // This method is called when a gif is received from the server.
-    console.log("Gif received");
+    
+    if(displayNewMessage(`<span>User-${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="150px" width="auto">`)){
+      scrollChatToBottom();  
+    }
 
-    var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
-    // Creates a new list item and adds it to the messagesList UL on index.cshtml
-
-    li.innerHTML = `<span>User-${user} : </span><img src="https://media.tenor.com/izF-verFvhkAAAAC/chillin-frogs.gif" alt="Chilling Frog" height="150px" width="auto">`;
-    // Assigns the list item content here
 });
 
 connection.start().then(function () {
@@ -118,4 +109,29 @@ function sendMessageToServer() {
         // Clear the text field once pressed
         // May need to make sure the message was successfully sent first
     }
+}
+
+function scrollChatToBottom(){
+    var chatbox = document.getElementById("chatBox");
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function displayNewMessage(messageContent){
+console.log("Message received"); 
+
+var shouldScroll = false;
+var chatbox = document.getElementById("chatBox");
+if(chatbox.scrollTop + chatbox.clientHeight === chatbox.scrollHeight){
+    shouldScroll = true;
+}
+// Checks if it should scroll down to show newest message
+
+var li = document.createElement("li");
+document.getElementById("messagesList").appendChild(li);
+// Creates a new list item and adds it to the messagesList UL on index.cshtml
+
+li.innerHTML = messageContent;
+// Assigns the list item content here
+
+return shouldScroll;
 }
