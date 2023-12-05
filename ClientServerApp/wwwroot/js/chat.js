@@ -6,6 +6,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 // Disable the buttons until connection is established.
 document.getElementById("sendButton").disabled = true;
 document.getElementById("sendGifButton").disabled = true;
+document.getElementById("defaultRoom").disabled = true;
 
 connection.on("ReceiveMessage", function (user, message) {
     // This method is called when a message is received from the server.
@@ -30,25 +31,23 @@ connection.start().then(function () {
     document.getElementById("sendGifButton").disabled = false;
     // Enable the buttons once connection is established.
 
-    makeRoomConnectionReq("Room1");
+    makeRoomConnectionReq("Room 1");
 
 }).catch(function (err) {
     return console.error(err.toString());
     // Prints any error message to console.
 });
 
-document.getElementById("roomButton").addEventListener("click", function (event) {
-    // This method is called when the room button is pressed.
-    var room = document.getElementById("roomInput").value;
-
-    makeRoomConnectionReq(room);
-
-    document.getElementById("roomInput").value = "";
-    // Clear the text field once pressed
-    // May need to make sure the connection was successful first
-
-    event.preventDefault();
+document.querySelectorAll(".roomButton").forEach(element => {
+    element.addEventListener("click", function() {
+        makeRoomConnectionReq(element.value);
+        document.querySelectorAll(".roomButton").forEach(element2 => { 
+            element2.disabled = false;
+        });
+        element.disabled = true;
+    });
 });
+
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
     // This method is called when the send button is pressed.
@@ -72,6 +71,7 @@ document.getElementById("messageInput").addEventListener("keydown", function(eve
     if (event.key === "Enter") {
         sendMessageToServer();
     }
+    
 });
 
 function makeRoomConnectionReq(room) {
