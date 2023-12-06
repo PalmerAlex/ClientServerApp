@@ -57,6 +57,8 @@ namespace SignalRChat.Hubs
             // This method gets called from chat.js when the connect room button is pressed
 
             await AddClientToRoom(Context.ConnectionId, portId);
+            await Clients.All.SendAsync("UpdateRoomCount", $"Room{portId[5]}count", "5");
+            
             return true;
 
         }
