@@ -26,6 +26,14 @@ connection.on("ReceiveGif", function (user) {
 
 });
 
+connection.on("UpdateRoomCount", function (roomName, amount) {
+    // This method is called when a rooms counter receives an update from the server
+    
+    document.getElementById(roomName).textContent = `${amount} Online`;
+    
+  
+});
+
 connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;
     document.getElementById("sendGifButton").disabled = false;
